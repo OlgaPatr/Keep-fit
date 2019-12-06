@@ -24,17 +24,27 @@ class ScreenTwo(Screen):
 class Time(Widget):
     time = NumericProperty(30)
 
+class Num(Widget):
+    num = NumericProperty(1)
+
 
 class WindowManager(ScreenManager):
     time = Time()
+    num = Num()
+    
     def update(self, dt):
         self.time.time -= 1
         if (self.time.time == 0):
-            self.stop()
+            self.num.num += 1
+            self.event.cancel()
+            self.count_down()
+            
     def count_down(self):
         self.time.time = 30
         self.event = Clock.schedule_interval(self.update, 1.0)
+    
     def stop(self):
+        self.num.num = 1
         self.event.cancel()
 
 kv = Builder.load_string('''
@@ -78,11 +88,16 @@ kv = Builder.load_string('''
     name : "2"
     FloatLayout:
         orientation: 'vertical'
+        canvas:
+            Rectangle:
+                source: 'C:/Users/79263/Downloads/ПОЕХАЛИ ! (4).png'
+                size: 390, 600
+                pos: self.pos
         Button:
             text: "Закончим"
             font_size : '30sp'
             color: 3, 3, 3, 1
-            pos: 80, 10
+            pos: 85, 90
             size_hint: .6, 0.08
             background_color : 0, 0, 0, 0
             background_normal : ''
@@ -100,9 +115,14 @@ kv = Builder.load_string('''
                 root.manager.stop()
         Label:
             text: str(root.manager.time.time)
-            pos : 175, 500
+            pos : 170, 460
             size_hint : .1, .1
-            font_size : '30sp'
+            font_size : '45sp'
+        AsyncImage:
+            source: 'C:/Users/79263/Keep Fit/' + str(root.manager.num.num) + '.gif'
+            anim_delay: 0.5
+            
+        
 
 ''')
 
